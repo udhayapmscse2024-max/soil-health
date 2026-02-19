@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "538014334943",
+    "project_id": "soil-health-33386",
+    "storage_bucket": "soil-health-33386.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:538014334943:android:4e741e340bdb6e35958e6a",
+        "android_client_info": {
+          "package_name": "com.soilhealth.soilhealth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "538014334943-n4iqq8ghsbnsc84e8posj75q79muedl0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWMSbVOUwIH-JnDbXp0mTLds4CilKizqU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "538014334943-n4iqq8ghsbnsc84e8posj75q79muedl0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
