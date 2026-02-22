@@ -664,7 +664,7 @@ class AlertsPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      'Notification sent to user: ${alert.deviceName} reported ${alert.alertFor}.',
+                      'Notification sent to user.',
                       style: TextStyle(color: alert.color),
                     ),
                   ),
