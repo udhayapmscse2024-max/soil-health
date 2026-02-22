@@ -1,0 +1,11 @@
+{
+  "sensor_type": "NPK",
+  "unit": "mg/kg",
+  "readings": {
+    "nitrogen": 42,
+    "phosphorus": 18,
+    "potassium": 55
+  },
+  "captured_at": "2026-02-19T00:00:00Z",
+  "notes": "Only NPK soil nutrient data is tracked."
+}
