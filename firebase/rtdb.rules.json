@@ -1,0 +1,57 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "devices": {
+          "$deviceId": {
+            "latest": {
+              "moisture": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+              },
+              "temperature": {
+                ".validate": "newData.isNumber() && newData.val() >= -50 && newData.val() <= 100"
+              },
+              "humidity": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+              },
+              "nitrogen": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 2000"
+              },
+              "phosphorus": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 2000"
+              },
+              "potassium": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 2000"
+              },
+              "timestamp": {
+                ".validate": "newData.isNumber() && newData.val() > 0"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+            "manualSample": {
+              "nitrogen": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 2000"
+              },
+              "phosphorus": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 2000"
+              },
+              "potassium": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 2000"
+              },
+              "timestamp": {
+                ".validate": "newData.isNumber() && newData.val() > 0"
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
