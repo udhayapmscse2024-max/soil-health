@@ -19,7 +19,7 @@ void setup() {
 
 float readMoisturePercent() {
   int raw = analogRead(moisturePin);
-  return map(raw, 1023, 300, 0, 100);
+  return (float)(raw - 1023) * 100.0 / (300.0 - 1023.0);
 }
 
 float readTemperatureC() {
