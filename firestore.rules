@@ -1,0 +1,122 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    // Sensor metadata document: /sensors/{deviceId}
+    // Expected fields:
+    // - ownerUid: string (required)
+    // - name: string (optional)
+    // - location: string (optional)
+    // - createdAt: timestamp (required)
+    // - updatedAt: timestamp (required)
+    function validSensorDoc() {
+      return request.resource.data.keys().hasOnly([
+          'ownerUid',
+          'name',
+          'location',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.ownerUid is string
+        && request.resource.data.ownerUid.size() > 0
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp
+        && (!('name' in request.resource.data) || request.resource.data.name is string)
+        && (!('location' in request.resource.data) || request.resource.data.location is string);
+    }
+
+    function sensorBelongsToCaller(deviceId) {
+      return signedIn()
+        && exists(/databases/$(database)/documents/sensors/$(deviceId))
+        && get(/databases/$(database)/documents/sensors/$(deviceId)).data.ownerUid == request.auth.uid;
+    }
+
+    // Historical reading document: /sensors/{deviceId}/readings/{readingId}
+    // Expected fields:
+    // - timestamp: timestamp (required)
+    // - soilMoisture: number 0..100 (required)
+    // - npk: map with nitrogen|phosphorus|potassium, each 0..255 (required)
+    // - dht22: map with temperatureC -40..80 and humidity 0..100 (required)
+    function validReadingDoc() {
+      return request.resource.data.keys().hasOnly([
+          'timestamp',
+          'soilMoisture',
+          'npk',
+          'dht22'
+        ])
+        && request.resource.data.timestamp is timestamp
+        && request.resource.data.soilMoisture is number
+        && request.resource.data.soilMoisture >= 0
+        && request.resource.data.soilMoisture <= 100
+        && request.resource.data.npk is map
+        && request.resource.data.npk.keys().hasOnly(['nitrogen', 'phosphorus', 'potassium'])
+        && request.resource.data.npk.nitrogen is number
+        && request.resource.data.npk.nitrogen >= 0
+        && request.resource.data.npk.nitrogen <= 255
+        && request.resource.data.npk.phosphorus is number
+        && request.resource.data.npk.phosphorus >= 0
+        && request.resource.data.npk.phosphorus <= 255
+        && request.resource.data.npk.potassium is number
+        && request.resource.data.npk.potassium >= 0
+        && request.resource.data.npk.potassium <= 255
+        && request.resource.data.dht22 is map
+        && request.resource.data.dht22.keys().hasOnly(['temperatureC', 'humidity'])
+        && request.resource.data.dht22.temperatureC is number
+        && request.resource.data.dht22.temperatureC >= -40
+        && request.resource.data.dht22.temperatureC <= 80
+        && request.resource.data.dht22.humidity is number
+        && request.resource.data.dht22.humidity >= 0
+        && request.resource.data.dht22.humidity <= 100;
+    }
+
+    // User profile / app data
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && request.resource.data.keys().hasOnly(['displayName', 'email', 'createdAt', 'updatedAt'])
+        && (!('displayName' in request.resource.data) || request.resource.data.displayName is string)
+        && (!('email' in request.resource.data) || request.resource.data.email is string)
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.updatedAt is timestamp;
+      allow update: if isOwner(userId)
+        && request.resource.data.keys().hasOnly(['displayName', 'email', 'createdAt', 'updatedAt'])
+        && (!('displayName' in request.resource.data) || request.resource.data.displayName is string)
+        && (!('email' in request.resource.data) || request.resource.data.email is string)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt is timestamp;
+      allow delete: if false;
+    }
+
+    // Sensor registration metadata
+    match /sensors/{deviceId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.ownerUid == request.auth.uid
+        && validSensorDoc();
+      allow update: if sensorBelongsToCaller(deviceId)
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && validSensorDoc();
+      allow delete: if false;
+
+      // Historical sensor readings
+      match /readings/{readingId} {
+        allow read: if signedIn();
+        allow create: if sensorBelongsToCaller(deviceId) && validReadingDoc();
+        allow update, delete: if false;
+      }
+    }
+
+    // Default deny all other collections/documents
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
