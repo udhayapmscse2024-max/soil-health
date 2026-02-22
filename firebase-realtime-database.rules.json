@@ -1,0 +1,100 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "sensors": {
+      "$deviceId": {
+        "readings": {
+          ".read": "auth != null",
+          ".indexOn": ["timestamp"],
+          "$readingId": {
+            ".write": "auth != null && auth.uid === $deviceId",
+
+            "timestamp": {
+              ".validate": "newData.isNumber() && newData.val() > 1700000000000"
+            },
+
+            "soilMoisture": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+            },
+
+            "npk": {
+              "nitrogen": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 255"
+              },
+              "phosphorus": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 255"
+              },
+              "potassium": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 255"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+
+            "dht22": {
+              "temperatureC": {
+                ".validate": "newData.isNumber() && newData.val() >= -40 && newData.val() <= 80"
+              },
+              "humidity": {
+                ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+              },
+              "$other": {
+                ".validate": false
+              }
+            },
+
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+
+        "latest": {
+          ".read": "auth != null",
+          ".write": "auth != null && auth.uid === $deviceId",
+
+          "timestamp": {
+            ".validate": "newData.isNumber()"
+          },
+          "soilMoisture": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+
+          "npk": {
+            "nitrogen": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 255"
+            },
+            "phosphorus": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 255"
+            },
+            "potassium": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 255"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+
+          "dht22": {
+            "temperatureC": {
+              ".validate": "newData.isNumber() && newData.val() >= -40 && newData.val() <= 80"
+            },
+            "humidity": {
+              ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+            },
+            "$other": {
+              ".validate": false
+            }
+          },
+
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    }
+  }
+}
