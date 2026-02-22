@@ -198,7 +198,7 @@ System flow:
 ### 4.5 Dashboard
 
 - **FR-15:** The system shall display weather information.
-- **FR-16:** The system shall greet the user.
+- **FR-16:** The system shall display a personalized dashboard summary with key user and farm highlights.
 - **FR-17:** The system shall display sensor values.
 - **FR-18:** The system shall display irrigation recommendation.
 - **FR-19:** The system shall display fertilizer recommendation.
